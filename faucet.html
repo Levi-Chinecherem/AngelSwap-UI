@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelSwap Faucet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sciFiBg: '#1A1A2E',
+                        sciFiAccent: '#FF4C60',
+                        sciFiText: '#EAEAEA',
+                    },
+                },
+            },
+        };
+
+        // Contract data for tokens
+        const faucetTokens = [
+            { name: 'ANGEL', contract: '0x123ABC456DEF7890' },
+            { name: 'NGN Token', contract: '0x456DEF7890ABC123' },
+            { name: 'EKE', contract: '0x7890ABC123DEF456' },
+            { name: 'ONU', contract: '0xDEF4567890ABC123' },
+            { name: 'HALO', contract: '0xABC123DEF4567890' }
+        ];
+
+        // Function to populate contract cards dynamically
+        function populateContracts() {
+            const contractContainer = document.getElementById('contract-container');
+            faucetTokens.forEach(token => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-700 p-6 rounded shadow relative';
+                card.innerHTML = `
+                    <h3 class="text-xl font-semibold mb-2">${token.name}</h3>
+                    <p class="text-gray-400 text-sm break-words">Contract: 
+                        <span id="${token.name}-contract">${token.contract}</span>
+                    </p>
+                    <button 
+                        onclick="copyToClipboard('${token.contract}')" 
+                        class="absolute top-2 right-2 text-sciFiAccent hover:text-white transition">
+                        &#x2398; <!-- Copy Icon -->
+                    </button>
+                `;
+                contractContainer.appendChild(card);
+            });
+        }
+
+        // Function to copy contract address to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Contract address copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy contract address. Please try again.');
+            });
+        }
+    </script>
+</head>
+<body class="bg-sciFiBg text-sciFiText font-sans" onload="populateContracts()">
+    <!-- Landing Section -->
+    <section class="min-h-screen flex items-center justify-center text-center p-4 bg-gradient-to-b from-sciFiBg to-gray-900">
+        <div class="max-w-3xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-sciFiAccent mb-4">
+                AngelSwap Faucet
+            </h1>
+            <p class="text-lg text-sciFiText mb-6">
+                Claim your free tokens daily and add them to your wallet! Switch to the PulseChain network to get started.
+            </p>
+            <button 
+                onclick="alert('Connecting wallet...')" 
+                class="bg-sciFiAccent text-sciFiBg py-3 px-8 rounded font-bold hover:bg-white hover:text-sciFiAccent transition">
+                Connect Wallet
+            </button>
+        </div>
+    </section>
+
+    <!-- Claiming Section -->
+    <section class="py-16 bg-gray-800 text-gray-200">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">Claim Your Tokens</h2>
+            <p class="text-lg mb-6">
+                Select the token you want to claim from the dropdown below and make sure your wallet is connected.
+            </p>
+            <div class="max-w-md mx-auto">
+                <select id="token-select" class="w-full p-3 mb-6 bg-gray-700 text-sciFiText rounded">
+                    <option value="ANGEL">ANGEL</option>
+                    <option value="NGN Token">NGN Token</option>
+                    <option value="EKE">EKE</option>
+                    <option value="ONU">ONU</option>
+                    <option value="HALO">HALO</option>
+                </select>
+                <button 
+                    onclick="alert('Claiming tokens for ' + document.getElementById('token-select').value)" 
+                    class="w-full bg-sciFiAccent text-sciFiBg py-3 rounded font-bold hover:bg-white hover:text-sciFiAccent transition">
+                    Claim Tokens
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contract Section -->
+    <section class="py-16 bg-gray-800 text-gray-200">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center text-sciFiAccent">Token Contracts</h2>
+            <p class="text-lg text-center mb-8">
+                Switch to the PulseChain network to claim your tokens and add them to MetaMask using the contract addresses below.
+            </p>
+            <div id="contract-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- Contract cards will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Guide Section -->
+    <section class="py-16 bg-gray-900 text-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-8">How to Add Tokens to MetaMask</h2>
+            <p class="text-lg mb-6">
+                Follow these steps to import the tokens into MetaMask:
+            </p>
+            <ol class="text-left max-w-3xl mx-auto text-lg space-y-4">
+                <li class="flex items-start">
+                    <span class="bg-sciFiAccent text-sciFiBg font-bold h-8 w-8 flex items-center justify-center rounded-full mr-4">1</span>
+                    <span>Open MetaMask and click the <b>"Import Tokens"</b> button.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-sciFiAccent text-sciFiBg font-bold h-8 w-8 flex items-center justify-center rounded-full mr-4">2</span>
+                    <span>Ensure you are switched to the <b>PulseChain Network</b>.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-sciFiAccent text-sciFiBg font-bold h-8 w-8 flex items-center justify-center rounded-full mr-4">3</span>
+                    <span>Copy the desired token's <b>contract address</b> from the list above.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-sciFiAccent text-sciFiBg font-bold h-8 w-8 flex items-center justify-center rounded-full mr-4">4</span>
+                    <span>Paste the contract address into the <b>"Token Contract Address"</b> field.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-sciFiAccent text-sciFiBg font-bold h-8 w-8 flex items-center justify-center rounded-full mr-4">5</span>
+                    <span>MetaMask will auto-fill the token symbol and decimals. Click <b>"Add Token"</b>.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="bg-sciFiAccent text-sciFiBg font-bold h-8 w-8 flex items-center justify-center rounded-full mr-4">6</span>
+                    <span>You can now see the token in your wallet!</span>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-900 text-center">
+        <p class="text-gray-400 text-sm">© 2024 AngelSwap. All rights reserved. Built on PulseChain.</p>
+    </footer>
+</body>
+</html>
