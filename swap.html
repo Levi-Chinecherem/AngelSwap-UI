@@ -100,9 +100,128 @@
             color: #fff;
         }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sciFiBg: '#1A1A2E',
+                        sciFiAccent: '#FF4C60',
+                        sciFiText: '#EAEAEA',
+                        buyColor: '#1D9A6C',  // Green for Buy orders
+                        sellColor: '#E53E3E',  // Red for Sell orders
+                    },
+                },
+            },
+        };
+
+        // Pagination Logic
+        let currentPageBuy = 1;
+        let currentPageSell = 1;
+        const ordersPerPage = 10;
+        const buyOrders = generateMockData('buy');
+        const sellOrders = generateMockData('sell');
+
+        // Mock Data Generation
+        function generateMockData(type) {
+            const data = [];
+            for (let i = 0; i < 50; i++) {
+                const price = (0.001 + Math.random() * 0.001).toFixed(4);
+                const amount = Math.floor(Math.random() * 500) + 1;
+                const total = (price * amount).toFixed(2);
+                data.push({ price, amount, total, type });
+            }
+            return data;
+        }
+
+        // Function to render the current page of orders
+        function renderOrders(type) {
+            const tableBody = document.getElementById(type + '-table-body');
+            tableBody.innerHTML = '';
+
+            const orders = type === 'buy' ? buyOrders : sellOrders;
+            const currentPage = type === 'buy' ? currentPageBuy : currentPageSell;
+            const startIndex = (currentPage - 1) * ordersPerPage;
+            const endIndex = Math.min(startIndex + ordersPerPage, orders.length);
+            const currentPageOrders = orders.slice(startIndex, endIndex);
+
+            currentPageOrders.forEach(order => {
+                const priceClass = order.type === 'buy' ? 'text-buyColor' : 'text-sellColor';
+                const row = `
+                    <tr class="border-t border-gray-700">
+                        <td class="px-6 py-4 ${priceClass}">${order.price}</td>
+                        <td class="px-6 py-4 text-gray-300">${order.amount}</td>
+                        <td class="px-6 py-4 text-gray-300">${order.total}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+
+            updatePagination(type);
+        }
+
+        // Function to update pagination controls
+        function updatePagination(type) {
+            const orders = type === 'buy' ? buyOrders : sellOrders;
+            const currentPage = type === 'buy' ? currentPageBuy : currentPageSell;
+            const totalPages = Math.ceil(orders.length / ordersPerPage);
+            const pagination = document.getElementById(type + '-pagination');
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.add('px-4', 'py-2', 'mx-1', 'bg-sciFiAccent', 'text-sciFiBg', 'rounded-full', 'hover:bg-white', 'transition');
+                if (i === currentPage) {
+                    pageButton.classList.add('bg-white', 'text-sciFiBg');
+                }
+                pageButton.addEventListener('click', () => {
+                    if (type === 'buy') {
+                        currentPageBuy = i;
+                    } else {
+                        currentPageSell = i;
+                    }
+                    renderOrders(type);
+                });
+                pagination.appendChild(pageButton);
+            }
+        }
+
+        // Initial render for Buy and Sell orders
+        document.addEventListener('DOMContentLoaded', () => {
+            renderOrders('buy');
+            renderOrders('sell');
+        });
+    </script>
 </head>
-<body>
-    <div class="container mx-auto px-4 py-8">
+
+<body class="bg-sciFiBg text-sciFiText font-sans">
+    <!-- Navbar -->
+    <header class="fixed top-0 w-full z-50 bg-sciFiBg shadow-lg">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
+            <a href="index.html" class="text-2xl font-bold text-sciFiAccent">AngelSwap</a>
+            <ul class="hidden md:flex space-x-6">
+                <li><a href="index.html" class="hover:text-sciFiAccent">Home</a></li>
+                <li><a href="swap.html" class="hover:text-sciFiAccent">Swap</a></li>
+                <li><a href="mempool.html" class="hover:text-sciFiAccent">Mempool</a></li>
+                <li><a href="history.html" class="hover:text-sciFiAccent">History</a></li>
+                <li><a href="about.html" class="hover:text-sciFiAccent">About</a></li>
+            </ul>
+            <!-- Security Toggle -->
+            <div class="flex items-center space-x-2">
+                <span class="text-sm">Security:</span>
+                <div id="security-toggle" class="relative flex items-center cursor-pointer w-16 h-8 bg-gray-600 rounded-full p-1">
+                    <div id="toggle-knob" class="bg-sciFiAccent w-6 h-6 rounded-full transition-transform"></div>
+                    <span id="toggle-text" class="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+                        OFF
+                    </span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- swap area -->
+    <div class="container mx-auto px-4 py-8 pt-20">
         <div class="flex justify-center">
             <div class="w-full max-w-lg bg-card shadow-2xl p-6">
                 <!-- Navigation Tabs -->
@@ -305,6 +424,58 @@
 
         </div>
     </div>
+
+    <!-- Order Book Section -->
+    <section class="pt-20 pb-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-3xl font-bold text-center mb-8 text-sciFiAccent">Order Book</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Buy Orders -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-semibold text-sciFiAccent mb-4">Buy Orders</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-sciFiBg text-sciFiText text-center rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-700">
+                                    <th class="px-4 py-2">Price</th>
+                                    <th class="px-4 py-2">Amount</th>
+                                    <th class="px-4 py-2">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="buy-table-body">
+                                <!-- Buy Orders will be dynamically rendered here -->
+                            </tbody>
+                        </table>
+                        <div id="buy-pagination" class="flex justify-center mt-4"></div>
+                    </div>
+                </div>
+                <!-- Sell Orders -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-semibold text-sciFiAccent mb-4">Sell Orders</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-sciFiBg text-sciFiText text-center rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-700">
+                                    <th class="px-4 py-2">Price</th>
+                                    <th class="px-4 py-2">Amount</th>
+                                    <th class="px-4 py-2">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sell-table-body">
+                                <!-- Sell Orders will be dynamically rendered here -->
+                            </tbody>
+                        </table>
+                        <div id="sell-pagination" class="flex justify-center mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-900 text-center">
+        <p class="text-gray-400 text-sm">©2024 AngelSwap. All rights reserved.</p>
+    </footer>
 
     <script>
         // Toggle between Swap and Liquidity
