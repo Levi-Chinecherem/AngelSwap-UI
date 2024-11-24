@@ -1,0 +1,8 @@
+i will need one more page, this one is not path of this other ones, its a stand alone but should still maintain the design pattern, this one is a faucet page to claim angel tokens, at  angel swap we have 5 tokens (ANGEL, NGN Token, EKE, ONU, HALO)
+users are supposed to select from a drop down the one they want to recieve, after they have connected their wallet, they can claim a specific amount of each of them daily, that is after every 24 hours
+
+this should have the landing page section, the claiming section, and the contract section
+
+the contract section will list each of the token contracts and tell users how to add those tokens to their wallet(metamask precisely) you know how tokens are imported in metamask its the same thing only this time they will be switching to pulsechain network to import the tokens, even they need to switch to pulsechain to claim the faucet too
+
+mindyou this should be very responsive and mobile friendly because i want it to be accessed through a telegram bot as a telegram miniapp where users can claim our tokens

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelSwap - History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sciFiBg: '#1A1A2E',
+                        sciFiAccent: '#FF4C60',
+                        sciFiText: '#EAEAEA',
+                    },
+                },
+            },
+        };
+
+        // Pagination Logic
+        let currentPage = 1;
+        const transactionsPerPage = 10;
+        const transactions = [
+            { id: '123456', from: '0xabc123...', to: '0xdef456...', amount: '1000 ABC', date: '2024-11-22 12:34' },
+            { id: '123457', from: '0xghi789...', to: '0xjkl012...', amount: '2000 DEF', date: '2024-11-21 14:22' },
+            { id: '123458', from: '0xghi789...', to: '0xjkl012...', amount: '1500 XYZ', date: '2024-11-20 11:10' },
+            { id: '123459', from: '0xghi789...', to: '0xjkl012...', amount: '1000 ABC', date: '2024-11-19 10:10' },
+            { id: '123460', from: '0xghi789...', to: '0xjkl012...', amount: '2500 GHI', date: '2024-11-18 09:15' },
+            { id: '123461', from: '0xghi789...', to: '0xjkl012...', amount: '1000 ABC', date: '2024-11-17 08:00' },
+            { id: '123462', from: '0xghi789...', to: '0xjkl012...', amount: '2000 DEF', date: '2024-11-16 07:10' },
+            { id: '123463', from: '0xghi789...', to: '0xjkl012...', amount: '1500 XYZ', date: '2024-11-15 06:30' },
+            { id: '123464', from: '0xghi789...', to: '0xjkl012...', amount: '1000 ABC', date: '2024-11-14 05:20' },
+            { id: '123465', from: '0xghi789...', to: '0xjkl012...', amount: '2000 DEF', date: '2024-11-13 04:40' },
+            { id: '123466', from: '0xghi789...', to: '0xjkl012...', amount: '2500 GHI', date: '2024-11-12 03:50' },
+            { id: '123467', from: '0xghi789...', to: '0xjkl012...', amount: '1500 XYZ', date: '2024-11-11 02:45' },
+            { id: '123468', from: '0xghi789...', to: '0xjkl012...', amount: '1000 ABC', date: '2024-11-10 01:30' },
+            { id: '123469', from: '0xghi789...', to: '0xjkl012...', amount: '2000 DEF', date: '2024-11-09 00:40' },
+            { id: '123470', from: '0xghi789...', to: '0xjkl012...', amount: '1500 XYZ', date: '2024-11-08 23:50' },
+            { id: '123471', from: '0xghi789...', to: '0xjkl012...', amount: '1000 ABC', date: '2024-11-07 22:35' },
+            { id: '123472', from: '0xghi789...', to: '0xjkl012...', amount: '2500 GHI', date: '2024-11-06 21:25' },
+            { id: '123473', from: '0xghi789...', to: '0xjkl012...', amount: '1500 XYZ', date: '2024-11-05 20:15' },
+            { id: '123474', from: '0xghi789...', to: '0xjkl012...', amount: '1000 ABC', date: '2024-11-04 19:05' },
+            { id: '123475', from: '0xghi789...', to: '0xjkl012...', amount: '2000 DEF', date: '2024-11-03 18:00' }
+        ];
+
+        // Function to render the current page of transactions
+        function renderTransactions() {
+            const tableBody = document.getElementById('transaction-table-body');
+            tableBody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * transactionsPerPage;
+            const endIndex = Math.min(startIndex + transactionsPerPage, transactions.length);
+            const currentPageTransactions = transactions.slice(startIndex, endIndex);
+
+            currentPageTransactions.forEach(transaction => {
+                const row = `
+                    <tr class="border-t border-gray-700">
+                        <td class="px-6 py-4 text-gray-300">${transaction.id}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.from}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.to}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.amount}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.date}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+
+            updatePagination();
+            updateTransactionCount();
+        }
+
+        // Function to update pagination controls
+        function updatePagination() {
+            const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.add('px-4', 'py-2', 'mx-1', 'bg-sciFiAccent', 'text-sciFiBg', 'rounded-full', 'hover:bg-white', 'transition');
+                if (i === currentPage) {
+                    pageButton.classList.add('bg-white', 'text-sciFiBg');
+                }
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    renderTransactions();
+                });
+                pagination.appendChild(pageButton);
+            }
+        }
+
+        // Function to update the transaction count text
+        function updateTransactionCount() {
+            const countText = document.getElementById('transaction-count');
+            const totalTransactions = transactions.length;
+            if (totalTransactions === 0) {
+                countText.textContent = "No transactions available.";
+            } else {
+                countText.textContent = `Total Transactions: ${totalTransactions}`;
+            }
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', renderTransactions);
+    </script>
+</head>
+<body class="bg-sciFiBg text-sciFiText font-sans">
+    <!-- Navbar -->
+    <header class="fixed top-0 w-full z-50 bg-sciFiBg shadow-lg">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
+            <a href="index.html" class="text-2xl font-bold text-sciFiAccent">AngelSwap</a>
+            <ul class="hidden md:flex space-x-6">
+                <li><a href="index.html" class="hover:text-sciFiAccent">Home</a></li>
+                <li><a href="swap.html" class="hover:text-sciFiAccent">Swap</a></li>
+                <li><a href="mempool.html" class="hover:text-sciFiAccent">Mempool</a></li>
+                <li><a href="history.html" class="hover:text-sciFiAccent">History</a></li>
+                <li><a href="about.html" class="hover:text-sciFiAccent">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="history" class="min-h-screen flex items-center justify-center text-center p-4 bg-gradient-to-b from-sciFiBg to-gray-900">
+        <div class="max-w-3xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-sciFiAccent mb-4">
+                AngelSwap Transaction History
+            </h1>
+            <p class="text-lg text-sciFiText mb-8">
+                Scroll to view the detailed history of your token swaps and transactions on AngelSwap.
+            </p>
+        </div>
+    </section>
+
+    <!-- History Table Section -->
+    <section class="py-16 bg-gray-800 text-gray-200">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">Your Transaction History</h2>
+
+            <!-- Transaction Count -->
+            <p id="transaction-count" class="text-lg mb-6"></p>
+
+            <div class="overflow-x-auto shadow-xl rounded-lg bg-gray-900">
+                <table class="min-w-full text-left">
+                    <thead class="bg-gray-800">
+                        <tr>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Transaction ID</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">From</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">To</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Amount</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-table-body">
+                        <!-- Rows will be dynamically filled here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div id="pagination" class="mt-6 text-center"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-900 text-center">
+        <p class="text-gray-400 text-sm">© 2024 AngelSwap. All rights reserved.</p>
+    </footer>
+</body>
+</html>

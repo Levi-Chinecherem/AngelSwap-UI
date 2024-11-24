@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelSwap - About</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sciFiBg: '#1A1A2E',
+                        sciFiAccent: '#FF4C60',
+                        sciFiText: '#EAEAEA',
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-sciFiBg text-sciFiText font-sans">
+    <!-- Navbar -->
+    <header class="fixed top-0 w-full z-50 bg-sciFiBg shadow-lg">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
+            <a href="index.html" class="text-2xl font-bold text-sciFiAccent">AngelSwap</a>
+            <ul class="hidden md:flex space-x-6">
+                <li><a href="#home" class="hover:text-sciFiAccent">Home</a></li>
+                <li><a href="swap.html" class="hover:text-sciFiAccent">Swap</a></li>
+                <li><a href="mempool.html" class="hover:text-sciFiAccent">Mempool</a></li>
+                <li><a href="history.html" class="hover:text-sciFiAccent">History</a></li>
+                <li><a href="about.html" class="hover:text-sciFiAccent">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="about" class="min-h-screen flex items-center justify-center text-center p-4 bg-gradient-to-b from-sciFiBg to-gray-900">
+        <div class="max-w-4xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-sciFiAccent mb-4">
+                About AngelSwap
+            </h1>
+            <p class="text-lg text-sciFiText mb-8">
+                AngelSwap is a decentralized exchange (DEX) built on PulseChain, designed to provide seamless and secure token swaps. 
+                Our mission is to enable fast, efficient, and low-cost transactions on the PulseChain network, while ensuring high-level security and user-friendly interfaces.
+            </p>
+        </div>
+    </section>
+
+    <!-- About Content Section -->
+    <section class="py-16 bg-gray-800 text-gray-200">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-3xl font-bold mb-8">Why AngelSwap?</h2>
+            <p class="text-lg mb-6">
+                At AngelSwap, we believe in the power of decentralization and transparency. Built on PulseChain, we ensure lightning-fast transactions with minimal fees, making it an ideal platform for anyone looking to swap tokens efficiently.
+            </p>
+            <p class="text-lg mb-6">
+                Whether you're a seasoned trader or a newcomer to the world of decentralized finance (DeFi), AngelSwap offers a secure and accessible platform for all your token-swapping needs.
+            </p>
+            <p class="text-lg mb-6">
+                Our platform leverages the strengths of PulseChain to offer superior scalability and a robust ecosystem for its users. With a focus on user experience and scalability, AngelSwap is the next evolution in decentralized token swaps.
+            </p>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="py-16 bg-gray-800 text-gray-200">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-3xl font-bold mb-8 text-sciFiAccent">Meet the Team</h2>
+            <p class="text-lg mb-6">
+                AngelSwap is powered by a passionate team of experts in blockchain technology, cryptography, and financial technology. Our goal is to continuously innovate and create the best decentralized exchange for the digital asset ecosystem.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <img src="team-member1.jpg" alt="Team Member 1" class="w-32 h-32 rounded-full mx-auto mb-4">
+                    <h4 class="text-xl font-semibold">John Doe</h4>
+                    <p class="text-lg text-gray-400">Founder & CEO</p>
+                </div>
+                <div class="text-center">
+                    <img src="team-member2.jpg" alt="Team Member 2" class="w-32 h-32 rounded-full mx-auto mb-4">
+                    <h4 class="text-xl font-semibold">Jane Smith</h4>
+                    <p class="text-lg text-gray-400">CTO & Blockchain Expert</p>
+                </div>
+                <div class="text-center">
+                    <img src="team-member3.jpg" alt="Team Member 3" class="w-32 h-32 rounded-full mx-auto mb-4">
+                    <h4 class="text-xl font-semibold">Mark Lee</h4>
+                    <p class="text-lg text-gray-400">Lead Developer</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-900 text-center">
+        <p class="text-gray-400 text-sm">© 2024 AngelSwap. All rights reserved. Built on PulseChain.</p>
+    </footer>
+</body>
+</html>

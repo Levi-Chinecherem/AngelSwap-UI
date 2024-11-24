@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelSwap - Mempool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sciFiBg: '#1A1A2E',
+                        sciFiAccent: '#FF4C60',
+                        sciFiText: '#EAEAEA',
+                    },
+                },
+            },
+        };
+
+        // Pagination Logic
+        let currentPage = 1;
+        const transactionsPerPage = 10;
+        const transactions = [
+            { id: '0x1234abc5678xyz', sender: '0xA1B2C3D4E5F6G7H8', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$500', status: 'Pending' },
+            { id: '0x2345def6789xyz', sender: '0x1234abcd5678efgh', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$300', status: 'Pending' },
+            { id: '0x3456ghi890xyz', sender: '0xABCD1234EFGH5678', receiver: '0x1234ijkl5678mnop', amount: '$1200', status: 'Pending' },
+            { id: '0x4567jkl0123xyz', sender: '0x4567ijklmnop8901', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$1000', status: 'Pending' },
+            { id: '0x5678mno2345xyz', sender: '0x5678mnopqrs9012', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$800', status: 'Pending' },
+            { id: '0x6789opq3456xyz', sender: '0x6789pqrs4567tuv', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$1500', status: 'Pending' },
+            { id: '0x7890rst4567xyz', sender: '0x7890rst5678uvw', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$2000', status: 'Pending' },
+            { id: '0x8901stu5678xyz', sender: '0x8901stuv6789xwy', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$900', status: 'Pending' },
+            { id: '0x9012uvw6789xyz', sender: '0x9012uvwx7890yza', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$1300', status: 'Pending' },
+            { id: '0x0123xyz7890xyz', sender: '0x0123xyz8901bcd', receiver: '0x9X8Y7Z6W5V4U3T2', amount: '$1100', status: 'Pending' }
+        ];
+
+        // Function to render the current page of transactions
+        function renderTransactions() {
+            const tableBody = document.getElementById('transaction-table-body');
+            tableBody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * transactionsPerPage;
+            const endIndex = Math.min(startIndex + transactionsPerPage, transactions.length);
+            const currentPageTransactions = transactions.slice(startIndex, endIndex);
+
+            currentPageTransactions.forEach(transaction => {
+                const row = `
+                    <tr class="border-t border-gray-700">
+                        <td class="px-6 py-4 text-gray-300">${transaction.id}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.sender}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.receiver}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.amount}</td>
+                        <td class="px-6 py-4 text-gray-300">${transaction.status}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+
+            updatePagination();
+            updateTransactionCount();
+        }
+
+        // Function to update pagination controls
+        function updatePagination() {
+            const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.add('px-4', 'py-2', 'mx-1', 'bg-sciFiAccent', 'text-sciFiBg', 'rounded-full', 'hover:bg-white', 'transition');
+                if (i === currentPage) {
+                    pageButton.classList.add('bg-white', 'text-sciFiBg');
+                }
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    renderTransactions();
+                });
+                pagination.appendChild(pageButton);
+            }
+        }
+
+        // Function to update the transaction count text
+        function updateTransactionCount() {
+            const countText = document.getElementById('transaction-count');
+            const totalTransactions = transactions.length;
+            if (totalTransactions === 0) {
+                countText.textContent = "No transactions available.";
+            } else {
+                countText.textContent = `Total Transactions: ${totalTransactions}`;
+            }
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', renderTransactions);
+    </script>
+</head>
+<body class="bg-sciFiBg text-sciFiText font-sans">
+    <!-- Navbar -->
+    <header class="fixed top-0 w-full z-50 bg-sciFiBg shadow-lg">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
+            <a href="index.html" class="text-2xl font-bold text-sciFiAccent">AngelSwap</a>
+            <ul class="hidden md:flex space-x-6">
+                <li><a href="index.html" class="hover:text-sciFiAccent">Home</a></li>
+                <li><a href="swap.html" class="hover:text-sciFiAccent">Swap</a></li>
+                <li><a href="mempool,html" class="hover:text-sciFiAccent">Mempool</a></li>
+                <li><a href="history.html" class="hover:text-sciFiAccent">History</a></li>
+                <li><a href="about.html" class="hover:text-sciFiAccent">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center text-center p-4 bg-gradient-to-b from-sciFiBg to-gray-900">
+        <div class="max-w-3xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-sciFiAccent mb-6">
+                AngelSwap: Mempool Insights
+            </h1>
+            <p class="text-lg md:text-2xl text-gray-300 mb-8">
+                Stay informed on pending transactions with real-time mempool data.
+            </p>
+        </div>
+    </section>
+
+    <!-- Mempool Section -->
+    <section id="mempool" class="py-16 bg-gray-800 text-gray-200">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">Mempool Overview</h2>
+
+            <!-- Mempool Transactions Count -->
+            <p id="transaction-count" class="text-lg mb-6"></p>
+
+            <!-- Transactions Table -->
+            <div class="overflow-x-auto shadow-xl rounded-lg bg-gray-900">
+                <table class="min-w-full text-left">
+                    <thead class="bg-gray-800">
+                        <tr>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Transaction ID</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Sender</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Receiver</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Amount</th>
+                            <th class="px-6 py-4 text-lg font-semibold text-sciFiAccent">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-table-body">
+                        <!-- Transactions will be dynamically rendered here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div id="pagination" class="mt-8 flex justify-center space-x-2"></div>
+        </div>
+    </section>
+</body>
+</html>
