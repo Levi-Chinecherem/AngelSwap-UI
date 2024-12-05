@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelSwap - Order Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sciFiBg: '#1A1A2E',
+                        sciFiAccent: '#FF4C60',
+                        sciFiText: '#EAEAEA',
+                        buyColor: '#1D9A6C',  // Green for Buy orders
+                        sellColor: '#E53E3E',  // Red for Sell orders
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+    
+        body {
+        background: #1A1A2E;
+        font-family: 'Roboto', sans-serif;
+        color: #e1e1e1;
+        overflow-x: hidden;
+        }
+
+        .btn-glow {
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+        }
+
+        .btn-glow::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background: #FF4C60;
+        border-radius: 50%;
+        z-index: -1;
+        transform: scale(0);
+        transition: all 0.3s ease;
+        }
+
+        .btn-glow:hover::after {
+        transform: scale(1);
+        top: 0;
+        left: 0;
+        }
+
+        .btn-glow:hover {
+        color: #a14d57;
+        }
+
+        .input-glow:focus {
+        border-color: #FF4C60;
+        box-shadow: 0 0 10px #FF4C60;
+        }
+
+        .bg-card {
+        background: linear-gradient(135deg, #7c4148, #03111f);
+        border-radius: 12px;
+        }
+
+        .nav-button {
+        background-color: #FF4C60;
+        border: none;
+        color: #fff;
+        transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+        background-color: #a14d57;
+        }
+
+        .container {
+        max-width: 1200px;
+        }
+
+        .tab-content {
+        display: none;
+        }
+
+        .tab-content.active {
+        display: block;
+        }
+
+        .arrow-btn {
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        }
+
+        .arrow-btn:hover {
+        transform: scale(1.2);
+        }
+
+        .tab-secondary {
+        background-color: #9b3743;
+        color: #fff;
+        }
+
+        .tab-secondary:hover {
+        background-color: #a14d57;
+        }
+
+        .tab-active {
+        background-color: #FF4C60;
+        color: #fff;
+        }
+    </style>
+</head>
+
+<body class="bg-sciFiBg text-sciFiText font-sans">
+    <!-- swap area -->
+    <div class="container mx-auto px-4 py-8 pt-20">
+        <div class="flex justify-center">
+            <div class="w-full max-w-lg bg-card shadow-2xl p-6">
+                <!-- Navigation Tabs -->
+                <div class="flex justify-between mb-4">
+                    <button id="swapTab" class="btn-glow nav-button py-2 px-6 rounded-lg font-bold text-lg tab-active">Swap</button>
+                    <button id="liquidityTab" class="btn-glow nav-button py-2 px-6 rounded-lg font-bold text-lg tab-active">Liquidity</button>
+                </div>
+
+                <!-- Swap Content -->
+                <div id="swapContent" class="tab-content active">
+                    <div class="flex justify-between mb-4">
+                        <button id="marketTab" class="btn-glow nav-button py-2 px-4 rounded-lg font-semibold text-lg tab-secondary">Market</button>
+                        <button id="limitTab" class="btn-glow nav-button py-2 px-4 rounded-lg font-semibold text-lg tab-secondary">Limit</button>
+                    </div>
+
+                    <!-- Market Tab -->
+                    <div id="marketContent" class="tab-content active">
+                        <div class="flex justify-between mb-4">
+                        </div>
+
+                        <div class="flex flex-col mb-4">
+                            <div class="flex items-center mb-3">
+                                <label class="text-white font-semibold text-lg">From</label>
+                                <span class="text-white ml-2">Balance: 26.7667 FTM</span>
+                                <div class="flex items-center ml-2">
+                                    <input type="checkbox" class="mr-2 text-cyan-500">
+                                    <span class="text-white text-sm">50%</span>
+                                    <button class="btn-glow nav-button py-1 px-3 rounded ml-2">MAX</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center mb-4">
+                                <input type="number" id="marketFromAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                                <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2" id="marketFromSelect">
+                                    <option value="FTM">FTM</option>
+                                    <option value="TOMB">TOMB</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center items-center mb-4">
+                            <button class="arrow-btn text-white" onclick="swapMarketAmounts()">⇅</button>
+                        </div>
+
+                        <div class="flex flex-col mb-4">
+                            <div class="flex items-center mb-3">
+                                <label class="text-white font-semibold text-lg">To</label>
+                                <span class="text-white ml-2">Balance: 0 TOMB</span>
+                            </div>
+                            <div class="flex items-center mb-4">
+                                <input type="number" id="marketToAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                                <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2" id="marketToSelect">
+                                    <option value="FTM">FTM</option>
+                                    <option value="TOMB">TOMB</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="btn-glow nav-button py-3 px-6 rounded-lg w-full">Enter an amount</button>
+                    </div>
+
+                    <!-- Limit Tab -->
+                    <div id="limitContent" class="tab-content">
+                        <div class="flex justify-between mb-4">
+                            <p class="text-white font-semibold text-lg">Limit Order</p>
+                        </div>
+
+                        <div class="flex flex-col mb-4">
+                            <div class="flex items-center mb-3">
+                                <label class="text-white font-semibold text-lg">From</label>
+                                <span class="text-white ml-2">Balance: 26.7667 FTM</span>
+                                <div class="flex items-center ml-2">
+                                    <input type="checkbox" class="mr-2 text-cyan-500">
+                                    <span class="text-white text-sm">50%</span>
+                                    <button class="btn-glow nav-button py-1 px-3 rounded ml-2">MAX</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center mb-4">
+                                <input type="number" id="limitFromAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                                <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2">
+                                    <option value="FTM">FTM</option>
+                                    <option value="TOMB">TOMB</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col mb-4">
+                            <div class="flex items-center mb-3">
+                                <label class="text-white font-semibold text-lg">To</label>
+                                <span class="text-white ml-2">Balance: 0 TOMB</span>
+                            </div>
+                            <div class="flex items-center mb-4">
+                                <input type="number" id="limitToAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                                <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2">
+                                    <option value="FTM">FTM</option>
+                                    <option value="TOMB">TOMB</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col mb-4">
+                            <div class="flex items-center mb-3">
+                                <label class="text-white font-semibold text-lg">Limit Price</label>
+                            </div>
+                            <div class="flex items-center mb-4">
+                                <input type="number" id="limitPrice" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col mb-4">
+                            <div class="flex items-center mb-3">
+                                <label class="text-white font-semibold text-lg">Above Market</label>
+                                <span class="text-white ml-2">0.0</span>
+                            </div>
+                            <div class="flex items-center mb-4">
+                                <input type="number" id="marketPercentage" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="% Above Market">
+                            </div>
+                        </div>
+
+                        <button class="btn-glow nav-button py-3 px-6 rounded-lg w-full">Place Limit Order</button>
+                    </div>
+                </div>
+
+                <!-- Liquidity Content -->
+                <div id="liquidityContent" class="tab-content">
+                    <div class="flex justify-between mb-4">
+                        <p class="text-white font-semibold text-lg">Add Liquidity</p>
+                    </div>
+
+                    <div class="flex flex-col mb-4">
+                        <div class="flex items-center mb-3">
+                            <label class="text-white font-semibold text-lg">From</label>
+                            <span class="text-white ml-2">Balance: 0 FTM</span>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="number" id="liquidityFromAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0" oninput="updateLiquidity()">
+                            <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2" id="liquidityFromSelect">
+                                <option value="FTM">FTM</option>
+                                <option value="TOMB">TOMB</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center items-center mb-4">
+                        <span class="text-2xl text-white font-bold">+</span>
+                    </div>
+
+                    <div class="flex flex-col mb-4">
+                        <div class="flex items-center mb-3">
+                            <label class="text-white font-semibold text-lg">To</label>
+                            <span class="text-white ml-2">Balance: 0 TOMB</span>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="number" id="liquidityToAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0" oninput="updateLiquidity()">
+                            <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2" id="liquidityToSelect">
+                                <option value="FTM">FTM</option>
+                                <option value="TOMB">TOMB</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Dynamically Displayed Prices and Pool Share -->
+                    <div id="poolDetails" class="hidden">
+                        <!-- Prices and Pool Share -->
+                        <h3 class="text-cyan-500 font-bold text-lg mb-2 border-b border-cyan-500 pb-1">Prices and Pool Share</h3>
+                        <div class="bg-card p-4 rounded-lg shadow-lg mb-4">
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>AVAX per FTM:</span>
+                                <span class="text-cyan-500 font-semibold">0.157275</span>
+                            </p>
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>FTM per AVAX:</span>
+                                <span class="text-cyan-500 font-semibold">6.35827</span>
+                            </p>
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>Share of Pool:</span>
+                                <span class="text-cyan-500 font-semibold">0.21%</span>
+                            </p>
+                        </div>
+
+                        <!-- Your Position -->
+                        <h3 class="text-cyan-500 font-bold text-lg mb-2 border-b border-cyan-500 pb-1">Your Position</h3>
+                        <div class="bg-card p-4 rounded-lg shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <img src="https://swap.tomb.com/images/tokens/AVAX.svg" alt="AVAX Logo" class="h-6 w-6 mr-3">
+                                <p class="text-white font-semibold text-md">FTM/AVAX</p>
+                            </div>
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>FTM:</span>
+                                <span class="text-cyan-500 font-semibold">0</span>
+                            </p>
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>AVAX:</span>
+                                <span class="text-cyan-500 font-semibold">0</span>
+                            </p>
+                        </div>
+                    </div>
+                    <br>
+                    <button id="submitLiquidity" class="btn-glow nav-button py-3 px-6 rounded-lg w-full">Add Liquidity</button>
+                </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Toggle between Swap and Liquidity
+        const swapTab = document.getElementById('swapTab');
+        const liquidityTab = document.getElementById('liquidityTab');
+        const swapContent = document.getElementById('swapContent');
+        const liquidityContent = document.getElementById('liquidityContent');
+
+        swapTab.addEventListener('click', () => {
+            swapContent.classList.add('active');
+            liquidityContent.classList.remove('active');
+        });
+
+        liquidityTab.addEventListener('click', () => {
+            liquidityContent.classList.add('active');
+            swapContent.classList.remove('active');
+        });
+
+        // Toggle between Market and Limit tabs
+        const marketTab = document.getElementById('marketTab');
+        const limitTab = document.getElementById('limitTab');
+        const marketContent = document.getElementById('marketContent');
+        const limitContent = document.getElementById('limitContent');
+
+        marketTab.addEventListener('click', () => {
+            marketContent.classList.add('active');
+            limitContent.classList.remove('active');
+        });
+
+        limitTab.addEventListener('click', () => {
+            limitContent.classList.add('active');
+            marketContent.classList.remove('active');
+        });
+
+        // Swap the amounts in the Liquidity section
+        function swapLiquidityAmounts() {
+            const liquidityFromAmount = document.getElementById('liquidityFromAmount');
+            const liquidityToAmount = document.getElementById('liquidityToAmount');
+            const liquidityFromSelect = document.getElementById('liquidityFromSelect');
+            const liquidityToSelect = document.getElementById('liquidityToSelect');
+
+            [liquidityFromAmount.value, liquidityToAmount.value] = [liquidityToAmount.value, liquidityFromAmount.value];
+            [liquidityFromSelect.value, liquidityToSelect.value] = [liquidityToSelect.value, liquidityFromSelect.value];
+        }
+
+        // Swap the amounts in the Swap section
+        function swapMarketAmounts() {
+            const marketFromAmount = document.getElementById('marketFromAmount');
+            const marketToAmount = document.getElementById('marketToAmount');
+            const marketFromSelect = document.getElementById('marketFromSelect');
+            const marketToSelect = document.getElementById('marketToSelect');
+
+            [marketFromAmount.value, marketToAmount.value] = [marketToAmount.value, marketFromAmount.value];
+            [marketFromSelect.value, marketToSelect.value] = [marketToSelect.value, marketFromSelect.value];
+        }
+
+        // update liquidity
+        function updateLiquidity() {
+            const fromAmount = document.getElementById('liquidityFromAmount').value;
+            const toAmount = document.getElementById('liquidityToAmount').value;
+            const poolDetails = document.getElementById('poolDetails');
+
+            if (fromAmount && toAmount && parseFloat(fromAmount) > 0 && parseFloat(toAmount) > 0) {
+                poolDetails.classList.remove('hidden');
+            } else {
+                poolDetails.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelSwap - Liquidity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sciFiBg: '#1A1A2E',
+                        sciFiAccent: '#FF4C60',
+                        sciFiText: '#EAEAEA',
+                        buyColor: '#1D9A6C',
+                        sellColor: '#E53E3E',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background: #1A1A2E;
+            font-family: 'Roboto', sans-serif;
+            color: #e1e1e1;
+            overflow-x: hidden;
+        }
+
+        .btn-glow {
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: #FF4C60;
+            border-radius: 50%;
+            z-index: -1;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow:hover::after {
+            transform: scale(1);
+            top: 0;
+            left: 0;
+        }
+
+        .btn-glow:hover {
+            color: #a14d57;
+        }
+
+        .input-glow:focus {
+            border-color: #FF4C60;
+            box-shadow: 0 0 10px #FF4C60;
+        }
+
+        .bg-card {
+            background: linear-gradient(135deg, #7c4148, #03111f);
+            border-radius: 12px;
+        }
+
+        .nav-button {
+            background-color: #FF4C60;
+            border: none;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #a14d57;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .arrow-btn {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .arrow-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .tab-secondary {
+            background-color: #9b3743;
+            color: #fff;
+        }
+
+        .tab-secondary:hover {
+            background-color: #a14d57;
+        }
+
+        .tab-active {
+            background-color: #FF4C60;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="bg-sciFiBg text-sciFiText font-sans">
+    <div class="container mx-auto px-4 py-8 pt-20">
+        <div class="flex justify-center">
+            <div class="w-full max-w-lg bg-card shadow-2xl p-6">
+                <div class="flex justify-between mb-4">
+                    <button class="btn-glow nav-button py-2 px-6 rounded-lg font-bold text-lg tab-active" onclick="switchTab('addLiquidity')">A_d_d</button>
+                    <button class="btn-glow nav-button py-2 px-6 rounded-lg font-bold text-lg tab-active" onclick="switchTab('removeLiquidity')">Remove</button>
+                </div>
+
+                <!-- Add Liquidity Tab -->
+                <div id="addLiquidity" class="tab-content active">
+                    <p class="text-white font-semibold text-lg mb-4">Add Liquidity</p>
+
+                    <div class="flex flex-col mb-4">
+                        <div class="flex items-center mb-3">
+                            <label class="text-white font-semibold text-lg">From</label>
+                            <span class="text-white ml-2">Balance: 0 FTM</span>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="number" id="liquidityFromAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0" oninput="updateLiquidity()">
+                            <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2" id="liquidityFromSelect">
+                                <option value="FTM">FTM</option>
+                                <option value="TOMB">TOMB</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center items-center mb-4">
+                        <span class="text-2xl text-white font-bold">+</span>
+                    </div>
+
+                    <div class="flex flex-col mb-4">
+                        <div class="flex items-center mb-3">
+                            <label class="text-white font-semibold text-lg">To</label>
+                            <span class="text-white ml-2">Balance: 0 TOMB</span>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="number" id="liquidityToAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0" oninput="updateLiquidity()">
+                            <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2" id="liquidityToSelect">
+                                <option value="FTM">FTM</option>
+                                <option value="TOMB">TOMB</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="poolDetails" class="hidden">
+                        <h3 class="text-cyan-500 font-bold text-lg mb-2 border-b border-cyan-500 pb-1">Prices and Pool Share</h3>
+                        <div class="bg-card p-4 rounded-lg shadow-lg mb-4">
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>AVAX per FTM:</span>
+                                <span class="text-cyan-500 font-semibold" id="avaxPerFtm">0.157275</span>
+                            </p>
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>FTM per AVAX:</span>
+                                <span class="text-cyan-500 font-semibold" id="ftmPerAvax">6.35827</span>
+                            </p>
+                            <p class="text-white text-sm flex items-center justify-between">
+                                <span>Share of Pool:</span>
+                                <span class="text-cyan-500 font-semibold" id="poolShare">0.21%</span>
+                            </p>
+                        </div>
+                    </div>
+                    <button id="submitLiquidity" class="btn-glow nav-button py-3 px-6 rounded-lg w-full">Add Liquidity</button>
+                </div>
+
+                <!-- Remove Liquidity Tab -->
+                <div id="removeLiquidity" class="tab-content">
+                    <p class="text-white font-semibold text-lg mb-4">Remove Liquidity</p>
+                    <div id="liquidityList">
+                        <!-- liquidity 1 -->
+                        <div class="liquidity-item bg-card p-4 rounded-lg mb-4">
+                            <h3 class="text-cyan-500 font-bold mb-2">Liquidity Pair: FTM/TOMB</h3>
+                            <p class="text-white text-sm">Initial Investment: 100 FTM</p>
+                            <p class="text-white text-sm">Pool Share: 5%</p>
+                            <p class="text-white text-sm">Interest Earned: 10 FTM</p>
+                            <p class="text-white text-sm">Total: 110 FTM</p>
+                            <div class="mt-4">
+                                <p class="text-white text-sm mb-2">Amount to Remove:</p>
+                                <div class="flex items-center mb-2">
+                                    <input type="number" placeholder="Enter amount" id="liquidityToRemove1" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2 w-full" data-total="110">
+                                </div>
+                                <div class="flex justify-between">
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(25, 'liquidityToRemove1')">25%</button>
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(50, 'liquidityToRemove1')">50%</button>
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(75, 'liquidityToRemove1')">75%</button>
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(100, 'liquidityToRemove1')">100%</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- liqiudity 2 -->
+                        <div class="liquidity-item bg-card p-4 rounded-lg mb-4">
+                            <h3 class="text-cyan-500 font-bold mb-2">Liquidity Pair: ETH/DAI</h3>
+                            <p class="text-white text-sm">Initial Investment: 450 ETH</p>
+                            <p class="text-white text-sm">Pool Share: 5%</p>
+                            <p class="text-white text-sm">Interest Earned: 50 ETH</p>
+                            <p class="text-white text-sm">Total: 500 ETH</p>
+                            <div class="mt-4">
+                                <p class="text-white text-sm mb-2">Amount to Remove:</p>
+                                <div class="flex items-center mb-2">
+                                    <input type="number" placeholder="Enter amount" id="liquidityToRemove2" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2 w-full" data-total="500">
+                                </div>
+                                <div class="flex justify-between">
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(25, 'liquidityToRemove2')">25%</button>
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(50, 'liquidityToRemove2')">50%</button>
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(75, 'liquidityToRemove2')">75%</button>
+                                    <button class="btn-glow nav-button px-4 py-2 rounded-lg" onclick="updateInputAmount(100, 'liquidityToRemove2')">100%</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-glow nav-button py-3 px-6 rounded-lg w-full">Remove Liquidity</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+<script src="liquidity.js"></script>
+</html>
