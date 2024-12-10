@@ -21,104 +21,103 @@
         };
     </script>
     <style>
-    
-body {
-  background: #1A1A2E;
-  font-family: 'Roboto', sans-serif;
-  color: #e1e1e1;
-  overflow-x: hidden;
-}
+        body {
+            background: #1A1A2E;
+            font-family: 'Roboto', sans-serif;
+            color: #e1e1e1;
+            overflow-x: hidden;
+        }
 
-.btn-glow {
-  position: relative;
-  z-index: 1;
-  transition: all 0.3s ease;
-}
+        .btn-glow {
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
 
-.btn-glow::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  background: #FF4C60;
-  border-radius: 50%;
-  z-index: -1;
-  transform: scale(0);
-  transition: all 0.3s ease;
-}
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: #FF4C60;
+            border-radius: 50%;
+            z-index: -1;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
 
-.btn-glow:hover::after {
-  transform: scale(1);
-  top: 0;
-  left: 0;
-}
+        .btn-glow:hover::after {
+            transform: scale(1);
+            top: 0;
+            left: 0;
+        }
 
-.btn-glow:hover {
-  color: #a14d57;
-}
+        .btn-glow:hover {
+            color: #a14d57;
+        }
 
-.input-glow:focus {
-  border-color: #FF4C60;
-  box-shadow: 0 0 10px #FF4C60;
-}
+        .input-glow:focus {
+            border-color: #FF4C60;
+            box-shadow: 0 0 10px #FF4C60;
+        }
 
-.bg-card {
-  background: linear-gradient(135deg, #7c4148, #03111f);
-  border-radius: 12px;
-}
+        .bg-card {
+            background: linear-gradient(135deg, #7c4148, #03111f);
+            border-radius: 12px;
+        }
 
-.nav-button {
-  background-color: #FF4C60;
-  border: none;
-  color: #fff;
-  transition: all 0.3s ease;
-}
+        .nav-button {
+            background-color: #FF4C60;
+            border: none;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
 
-.nav-button:hover {
-  background-color: #a14d57;
-}
+        .nav-button:hover {
+            background-color: #a14d57;
+        }
 
-.container {
-  max-width: 1200px;
-}
+        .container {
+            max-width: 1200px;
+        }
 
-.tab-content {
-  display: none;
-}
+        .tab-content {
+            display: none;
+        }
 
-.tab-content.active {
-  display: block;
-}
+        .tab-content.active {
+            display: block;
+        }
 
-.arrow-btn {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
+        .arrow-btn {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
 
-.arrow-btn:hover {
-  transform: scale(1.2);
-}
+        .arrow-btn:hover {
+            transform: scale(1.2);
+        }
 
-.tab-secondary {
-  background-color: #9b3743;
-  color: #fff;
-}
+        .tab-secondary {
+            background-color: #9b3743;
+            color: #fff;
+        }
 
-.tab-secondary:hover {
-  background-color: #a14d57;
-}
+        .tab-secondary:hover {
+            background-color: #a14d57;
+        }
 
-.tab-active {
-  background-color: #FF4C60;
-  color: #fff;
-}
+        .tab-active {
+            background-color: #FF4C60;
+            color: #fff;
+        }
     </style>
 </head>
 
 <body class="bg-sciFiBg text-sciFiText font-sans">
-    <!-- swap area -->
+    <!-- Swap and Limit tabs -->
     <div class="container mx-auto px-4 py-8 pt-20">
         <div class="flex justify-center">
             <div class="w-full max-w-lg bg-card shadow-2xl p-6">
@@ -165,6 +164,64 @@ body {
 
                         <button class="btn-glow nav-button py-3 px-6 rounded-lg w-full">Enter an amount</button>
                     </div>
+
+                    <!-- Limit Tab -->
+                    <div id="limitContent" class="tab-content">
+                      <div class="flex justify-between mb-4">
+                          <p class="text-white font-semibold text-lg">Limit Order</p>
+                      </div>
+
+                      <div class="flex flex-col mb-4">
+                          <div class="flex items-center mb-3">
+                              <label class="text-white font-semibold text-lg">From</label>
+                              <span class="text-white ml-2">Balance: 26.7667 FTM</span>
+                              <div class="flex items-center ml-2">
+                                  <input type="checkbox" class="mr-2 text-cyan-500">
+                                  <span class="text-white text-sm">50%</span>
+                                  <button class="btn-glow nav-button py-1 px-3 rounded ml-2">MAX</button>
+                              </div>
+                          </div>
+                          <div class="flex items-center mb-4">
+                              <input type="number" id="limitFromAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                              <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2">
+                                  <option value="FTM">FTM</option>
+                                  <option value="TOMB">TOMB</option>
+                              </select>
+                          </div>
+                      </div>
+
+                      <div class="flex flex-col mb-4">
+                          <div class="flex items-center mb-3">
+                              <label class="text-white font-semibold text-lg">To</label>
+                              <span class="text-white ml-2">Balance: 0 TOMB</span>
+                          </div>
+                          <div class="flex items-center mb-4">
+                              <input type="number" id="limitToAmount" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                              <select class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-24 ml-2">
+                                  <option value="FTM">FTM</option>
+                                  <option value="TOMB">TOMB</option>
+                              </select>
+                          </div>
+                      </div>
+
+                      <div class="flex flex-col mb-4">
+                          <div class="flex items-center mb-3">
+                              <label class="text-white font-semibold text-lg">Limit Price</label>
+                          </div>
+                          <div class="flex items-center mb-4">
+                              <input type="number" id="limitPrice" class="input-glow bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 w-full" placeholder="0.0">
+                          </div>
+                      </div>
+
+                      <div class="flex flex-col mb-4">
+                          <div class="flex items-center mb-3">
+                              <label class="text-white font-semibold text-lg">Above Market</label>
+                              <span class="text-white ml-2">0.0</span>
+                          </div>
+                      </div>
+
+                      <button class="btn-glow nav-button py-3 px-6 rounded-lg w-full">Place Limit Order</button>
+                  </div>
                 </div>
             </div>
         </div>
